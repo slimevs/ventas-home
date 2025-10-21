@@ -14,6 +14,25 @@ function doGet(e) {
       else data = listVentas_();
       return respond_(e, { ok: true, data });
     }
+    if (action === 'create' || action === 'update' || action === 'delete') {
+      var data = e.parameter.data ? JSON.parse(e.parameter.data) : {};
+      var id = e.parameter.id || '';
+      let out;
+      if (entity === 'clientes') {
+        if (action === 'create') out = createCliente_(data);
+        else if (action === 'update') out = updateCliente_(data);
+        else removeCliente_(id);
+      } else if (entity === 'productos') {
+        if (action === 'create') out = createProducto_(data);
+        else if (action === 'update') out = updateProducto_(data);
+        else removeProducto_(id);
+      } else {
+        if (action === 'create') out = createVenta_(data);
+        else if (action === 'update') out = updateVenta_(data);
+        else removeVenta_(id);
+      }
+      return respond_(e, { ok: true, data: out });
+    }
     return respond_(e, { ok: false, error: 'Unknown action' });
   } catch (err) {
     return respond_(e, { ok: false, error: String(err) });

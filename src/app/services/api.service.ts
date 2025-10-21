@@ -19,6 +19,11 @@ export class ApiService {
     }
     return await firstValueFrom(this.http.jsonp<T>(url, 'callback'));
   }
+  private buildJsonpUrl(params: Record<string, string>): string {
+    const usp = new URLSearchParams(params);
+    usp.set('t', String(Date.now()));
+    return `${this.baseUrl}?${usp.toString()}`;
+  }
 
   async list(): Promise<Venta[]> {
     const url = `${this.baseUrl}?action=list&entity=ventas`;
@@ -27,33 +32,48 @@ export class ApiService {
   }
 
   async create(v: Venta): Promise<Venta> {
-    const body = new URLSearchParams();
-    body.set('action', 'create');
-    body.set('entity', 'ventas');
-    body.set('data', JSON.stringify(this.serializeVenta(v)));
-    const res = await firstValueFrom(
-      this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
-    );
+    if (this.isRelativeBase()) {
+      const body = new URLSearchParams();
+      body.set('action', 'create');
+      body.set('entity', 'ventas');
+      body.set('data', JSON.stringify(this.serializeVenta(v)));
+      const res = await firstValueFrom(
+        this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
+      );
+      return this.deserializeVenta(res?.data);
+    }
+    const url = this.buildJsonpUrl({ action: 'create', entity: 'ventas', data: JSON.stringify(this.serializeVenta(v)) });
+    const res = await firstValueFrom(this.http.jsonp<any>(url, 'callback'));
     return this.deserializeVenta(res?.data);
   }
 
   async update(v: Venta): Promise<Venta> {
-    const body = new URLSearchParams();
-    body.set('action', 'update');
-    body.set('entity', 'ventas');
-    body.set('data', JSON.stringify(this.serializeVenta(v)));
-    const res = await firstValueFrom(
-      this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
-    );
+    if (this.isRelativeBase()) {
+      const body = new URLSearchParams();
+      body.set('action', 'update');
+      body.set('entity', 'ventas');
+      body.set('data', JSON.stringify(this.serializeVenta(v)));
+      const res = await firstValueFrom(
+        this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
+      );
+      return this.deserializeVenta(res?.data);
+    }
+    const url = this.buildJsonpUrl({ action: 'update', entity: 'ventas', data: JSON.stringify(this.serializeVenta(v)) });
+    const res = await firstValueFrom(this.http.jsonp<any>(url, 'callback'));
     return this.deserializeVenta(res?.data);
   }
 
   async remove(id: string): Promise<void> {
-    const body = new URLSearchParams();
-    body.set('action', 'delete');
-    body.set('entity', 'ventas');
-    body.set('id', id);
-    await firstValueFrom(this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } }));
+    if (this.isRelativeBase()) {
+      const body = new URLSearchParams();
+      body.set('action', 'delete');
+      body.set('entity', 'ventas');
+      body.set('id', id);
+      await firstValueFrom(this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } }));
+      return;
+    }
+    const url = this.buildJsonpUrl({ action: 'delete', entity: 'ventas', id });
+    await firstValueFrom(this.http.jsonp<any>(url, 'callback'));
   }
 
   private serializeVenta(v: Venta) {
@@ -81,33 +101,48 @@ export class ApiService {
   }
 
   async createCliente(c: Cliente): Promise<Cliente> {
-    const body = new URLSearchParams();
-    body.set('action', 'create');
-    body.set('entity', 'clientes');
-    body.set('data', JSON.stringify(c));
-    const res = await firstValueFrom(
-      this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
-    );
+    if (this.isRelativeBase()) {
+      const body = new URLSearchParams();
+      body.set('action', 'create');
+      body.set('entity', 'clientes');
+      body.set('data', JSON.stringify(c));
+      const res = await firstValueFrom(
+        this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
+      );
+      return res?.data as Cliente;
+    }
+    const url = this.buildJsonpUrl({ action: 'create', entity: 'clientes', data: JSON.stringify(c) });
+    const res = await firstValueFrom(this.http.jsonp<any>(url, 'callback'));
     return res?.data as Cliente;
   }
 
   async updateCliente(c: Cliente): Promise<Cliente> {
-    const body = new URLSearchParams();
-    body.set('action', 'update');
-    body.set('entity', 'clientes');
-    body.set('data', JSON.stringify(c));
-    const res = await firstValueFrom(
-      this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
-    );
+    if (this.isRelativeBase()) {
+      const body = new URLSearchParams();
+      body.set('action', 'update');
+      body.set('entity', 'clientes');
+      body.set('data', JSON.stringify(c));
+      const res = await firstValueFrom(
+        this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
+      );
+      return res?.data as Cliente;
+    }
+    const url = this.buildJsonpUrl({ action: 'update', entity: 'clientes', data: JSON.stringify(c) });
+    const res = await firstValueFrom(this.http.jsonp<any>(url, 'callback'));
     return res?.data as Cliente;
   }
 
   async removeCliente(id: string): Promise<void> {
-    const body = new URLSearchParams();
-    body.set('action', 'delete');
-    body.set('entity', 'clientes');
-    body.set('id', id);
-    await firstValueFrom(this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } }));
+    if (this.isRelativeBase()) {
+      const body = new URLSearchParams();
+      body.set('action', 'delete');
+      body.set('entity', 'clientes');
+      body.set('id', id);
+      await firstValueFrom(this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } }));
+      return;
+    }
+    const url = this.buildJsonpUrl({ action: 'delete', entity: 'clientes', id });
+    await firstValueFrom(this.http.jsonp<any>(url, 'callback'));
   }
 
   // ---- Productos ----
@@ -118,32 +153,47 @@ export class ApiService {
   }
 
   async createProducto(p: Producto): Promise<Producto> {
-    const body = new URLSearchParams();
-    body.set('action', 'create');
-    body.set('entity', 'productos');
-    body.set('data', JSON.stringify(p));
-    const res = await firstValueFrom(
-      this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
-    );
+    if (this.isRelativeBase()) {
+      const body = new URLSearchParams();
+      body.set('action', 'create');
+      body.set('entity', 'productos');
+      body.set('data', JSON.stringify(p));
+      const res = await firstValueFrom(
+        this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
+      );
+      return res?.data as Producto;
+    }
+    const url = this.buildJsonpUrl({ action: 'create', entity: 'productos', data: JSON.stringify(p) });
+    const res = await firstValueFrom(this.http.jsonp<any>(url, 'callback'));
     return res?.data as Producto;
   }
 
   async updateProducto(p: Producto): Promise<Producto> {
-    const body = new URLSearchParams();
-    body.set('action', 'update');
-    body.set('entity', 'productos');
-    body.set('data', JSON.stringify(p));
-    const res = await firstValueFrom(
-      this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
-    );
+    if (this.isRelativeBase()) {
+      const body = new URLSearchParams();
+      body.set('action', 'update');
+      body.set('entity', 'productos');
+      body.set('data', JSON.stringify(p));
+      const res = await firstValueFrom(
+        this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } })
+      );
+      return res?.data as Producto;
+    }
+    const url = this.buildJsonpUrl({ action: 'update', entity: 'productos', data: JSON.stringify(p) });
+    const res = await firstValueFrom(this.http.jsonp<any>(url, 'callback'));
     return res?.data as Producto;
   }
 
   async removeProducto(id: string): Promise<void> {
-    const body = new URLSearchParams();
-    body.set('action', 'delete');
-    body.set('entity', 'productos');
-    body.set('id', id);
-    await firstValueFrom(this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } }));
+    if (this.isRelativeBase()) {
+      const body = new URLSearchParams();
+      body.set('action', 'delete');
+      body.set('entity', 'productos');
+      body.set('id', id);
+      await firstValueFrom(this.http.post<any>(this.baseUrl, body.toString(), { headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } }));
+      return;
+    }
+    const url = this.buildJsonpUrl({ action: 'delete', entity: 'productos', id });
+    await firstValueFrom(this.http.jsonp<any>(url, 'callback'));
   }
 }
