@@ -15,10 +15,10 @@ export class DataService {
   private readonly _clientes = signal<string[]>([]);
   private readonly _filter = signal<{ from?: string; to?: string }>({});
 
-  mode = this._mode.asReadonly;
-  ventas = computed(() => this.filterVentas(this._ventas()))
-  productos = this._productos.asReadonly;
-  clientes = this._clientes.asReadonly;
+  readonly mode = this._mode.asReadonly();
+  readonly ventas = computed(() => this.filterVentas(this._ventas()));
+  readonly productos = this._productos.asReadonly();
+  readonly clientes = this._clientes.asReadonly();
 
   constructor(private csv: CsvService, private api: ApiService) {
     // configure sources
@@ -103,4 +103,3 @@ export class DataService {
     this._ventas.set(this._ventas().filter(x => x.id !== id));
   }
 }
-
