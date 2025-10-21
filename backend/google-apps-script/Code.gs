@@ -4,8 +4,8 @@
  */
 
 function doGet(e) {
-  const action = (e?.parameter?.action || 'list').toLowerCase();
-  const entity = (e?.parameter?.entity || 'ventas').toLowerCase();
+  var action = ((e && e.parameter && e.parameter.action) ? e.parameter.action : 'list').toLowerCase();
+  var entity = ((e && e.parameter && e.parameter.entity) ? e.parameter.entity : 'ventas').toLowerCase();
   try {
     if (action === 'list') {
       let data;
@@ -48,11 +48,11 @@ function doPost(e) {
       id = e.parameter.id || '';
       data = e.parameter.data ? JSON.parse(e.parameter.data) : {};
     } else {
-      const body = JSON.parse(e.postData.contents || '{}');
-      action = String(body?.action || '').toLowerCase();
-      entity = String(body?.entity || 'ventas').toLowerCase();
-      id = body?.id || '';
-      data = body?.data || {};
+      var body = JSON.parse((e && e.postData && e.postData.contents) ? e.postData.contents : '{}');
+      action = String((body && body.action) || '').toLowerCase();
+      entity = String((body && body.entity) || 'ventas').toLowerCase();
+      id = (body && body.id) || '';
+      data = (body && body.data) || {};
     }
     if (action === 'create') {
       let out;
