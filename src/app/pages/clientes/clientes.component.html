@@ -1,7 +1,56 @@
 <section class="card">
-  <h2 style="margin-top:0;">Clientes</h2>
-  <ul>
-    <li *ngFor="let c of data.clientes()">{{ c }}</li>
-  </ul>
-</section>
+  <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+    <h2 style="margin:0;">Clientes</h2>
+    <span style="color:var(--muted);">{{ data.clientes().length }} registros</span>
+    <span style="margin-left:auto"></span>
+    <span *ngIf="readOnly" style="color:var(--muted); font-size:12px;">Modo CSV: solo lectura</span>
+  </div>
 
+  <div class="card" style="margin-top:12px;" *ngIf="!readOnly">
+    <form (ngSubmit)="add()" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px;">
+      <label>Nombre <input type="text" [(ngModel)]="nuevo.nombre" name="nombre" required /></label>
+      <label>Email <input type="email" [(ngModel)]="nuevo.email" name="email" /></label>
+      <label>Teléfono <input type="text" [(ngModel)]="nuevo.telefono" name="telefono" /></label>
+      <label>Departamento <input type="text" [(ngModel)]="nuevo.departamento" name="departamento" /></label>
+      <div style="display:flex; align-items:end;">
+        <button class="btn" type="submit">Agregar</button>
+      </div>
+    </form>
+  </div>
+
+  <table style="margin-top:12px; width:100%;">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Departamento</th>
+        <th style="width:160px;"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of data.clientes()">
+        <ng-container *ngIf="editId !== c.id; else editRow">
+          <td>{{ c.nombre }}</td>
+          <td>{{ c.email || '-' }}</td>
+          <td>{{ c.telefono || '-' }}</td>
+          <td>{{ c.departamento || '-' }}</td>
+          <td>
+            <button class="btn secondary" (click)="startEdit(c)" [disabled]="readOnly">Editar</button>
+            <button class="btn danger" (click)="remove(c.id)" [disabled]="readOnly">Eliminar</button>
+          </td>
+        </ng-container>
+        <ng-template #editRow>
+          <td><input type="text" [(ngModel)]="editModel.nombre" name="edit_nombre_{{c.id}}" required /></td>
+          <td><input type="email" [(ngModel)]="editModel.email" name="edit_email_{{c.id}}" /></td>
+          <td><input type="text" [(ngModel)]="editModel.telefono" name="edit_tel_{{c.id}}" /></td>
+          <td><input type="text" [(ngModel)]="editModel.departamento" name="edit_dep_{{c.id}}" /></td>
+          <td>
+            <button class="btn" (click)="save()">Guardar</button>
+            <button class="btn secondary" (click)="cancelEdit()" type="button">Cancelar</button>
+          </td>
+        </ng-template>
+      </tr>
+    </tbody>
+  </table>
+</section>

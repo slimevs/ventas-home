@@ -1,22 +1,56 @@
 <section class="card">
-  <h2 style="margin-top:0;">Inventario</h2>
-  <table>
+  <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+    <h2 style="margin:0;">Inventario</h2>
+    <span style="color:var(--muted);">{{ data.productos().length }} registros</span>
+    <span style="margin-left:auto"></span>
+    <span *ngIf="readOnly" style="color:var(--muted); font-size:12px;">Modo CSV: solo lectura</span>
+  </div>
+
+  <div class="card" style="margin-top:12px;" *ngIf="!readOnly">
+    <form (ngSubmit)="add()" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:12px;">
+      <label>Producto <input type="text" [(ngModel)]="nuevo.nombre" name="nombre" required /></label>
+      <label>Stock <input type="number" [(ngModel)]="nuevo.stock" name="stock" min="0" required /></label>
+      <label>Precio <input type="number" [(ngModel)]="nuevo.precio" name="precio" min="0" step="0.01" required /></label>
+      <label>Costo <input type="number" [(ngModel)]="nuevo.costo" name="costo" min="0" step="0.01" required /></label>
+      <div style="display:flex; align-items:end;">
+        <button class="btn" type="submit">Agregar</button>
+      </div>
+    </form>
+  </div>
+
+  <table style="margin-top:12px;">
     <thead>
       <tr>
         <th>Producto</th>
         <th>Stock</th>
         <th>Precio</th>
         <th>Costo</th>
+        <th style="width:160px;"></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let p of data.productos()">
-        <td>{{ p.nombre }}</td>
-        <td>{{ p.stock }}</td>
-        <td>{{ p.precio | currency:'USD' }}</td>
-        <td>{{ p.costo | currency:'USD' }}</td>
+        <ng-container *ngIf="editId !== p.id; else editRow">
+          <td [ngClass]="p.stock <= 5 ? 'stock-low' : (p.stock <= 10 ? 'stock-mid' : 'stock-ok')">{{ p.nombre }}</td>
+          <td [ngClass]="p.stock <= 5 ? 'stock-low' : (p.stock <= 10 ? 'stock-mid' : 'stock-ok')">{{ p.stock }}</td>
+          <td>{{ p.precio | currency:'USD' }}</td>
+          <td>{{ p.costo | currency:'USD' }}</td>
+          <td>
+            <button class="btn secondary" (click)="startEdit(p)" [disabled]="readOnly">Editar</button>
+            <button class="btn danger" (click)="remove(p.id)" [disabled]="readOnly">Eliminar</button>
+          </td>
+        </ng-container>
+        <ng-template #editRow>
+          <td><input type="text" [(ngModel)]="editModel.nombre" name="edit_nombre_{{p.id}}" required /></td>
+          <td><input type="number" [(ngModel)]="editModel.stock" name="edit_stock_{{p.id}}" min="0" required /></td>
+          <td><input type="number" [(ngModel)]="editModel.precio" name="edit_precio_{{p.id}}" min="0" step="0.01" required /></td>
+          <td><input type="number" [(ngModel)]="editModel.costo" name="edit_costo_{{p.id}}" min="0" step="0.01" required /></td>
+          <td>
+            <button class="btn" (click)="save()">Guardar</button>
+            <button class="btn secondary" (click)="cancelEdit()" type="button">Cancelar</button>
+          </td>
+        </ng-template>
       </tr>
     </tbody>
   </table>
 </section>
-

@@ -3,9 +3,9 @@ export interface Venta {
   fecha: Date;
   cliente: string;
   producto: string;
+  productoId?: string;
   cantidad: number;
   precio: number;
   total: number;
   costo: number;
 }
-

@@ -1,9 +1,12 @@
 <section class="card">
-  <div style="display:flex; align-items:center; gap:12px;">
+  <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
     <h2 style="margin:0;">Ventas</h2>
     <span style="color:var(--muted);">{{ data.ventas().length }} registros</span>
     <span style="margin-left:auto"></span>
     <app-venta-form />
+    <span *ngIf="data.mode() === 'csv'" style="color:var(--muted); font-size:12px;">
+      Modo CSV: solo lectura. Cambia a 'mock' o 'api' para habilitar crear/editar/eliminar.
+    </span>
   </div>
 
   <table style="margin-top:12px;">
@@ -21,7 +24,7 @@
       <tr *ngFor="let v of data.ventas()">
         <td>{{ v.fecha | date:'yyyy-MM-dd' }}</td>
         <td>{{ v.cliente }}</td>
-        <td>{{ v.producto }}</td>
+        <td>{{ data.productNameFor(v) }}</td>
         <td>{{ v.cantidad }}</td>
         <td>{{ v.total | currency:'USD' }}</td>
         <td>
@@ -31,4 +34,3 @@
     </tbody>
   </table>
 </section>
-

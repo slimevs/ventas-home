@@ -81,6 +81,26 @@ Cómo publicar el Web App de Apps Script:
 
 ---
 
+## Desarrollo sin CORS (proxy) y Producción
+
+- Desarrollo (localhost):
+  - Ya viene configurado un proxy: `proxy.conf.json`
+  - Ejecuta con proxy: `npm run start` (equivale a `ng serve -o --proxy-config proxy.conf.json`)
+  - `environment.ts` usa `apiBaseUrl: '/api'` para que las llamadas pasen por el proxy y eviten CORS.
+  - Opcional sin proxy: `npm run start:plain` (recomendado sólo si no necesitas API en dev).
+
+- Producción:
+  - `environment.prod.ts` usa `mode: 'api'` con `apiBaseUrl` absoluto (URL del Web App).
+  - Lecturas (listar) usan JSONP para esquivar CORS de `script.google.com`.
+  - Escrituras (crear/editar/eliminar) se envían como `application/x-www-form-urlencoded`.
+  - Despliega con `ng build --configuration production` y sirve el contenido de `dist/gestor-ventas` o usa GitHub Pages.
+
+Notas sobre CORS/JSONP:
+- Si cambias el dominio del backend, mantén JSONP para lecturas o agrega cabeceras CORS en el proxy/backend.
+- En producción avanzada, puedes poner un proxy serverless (Netlify/Vercel/Cloud Functions) que añada `Access-Control-Allow-Origin`.
+
+---
+
 ## Despliegue en GitHub Pages
 ```bash
 # Compilar para producción
@@ -101,4 +121,3 @@ Notas:
 ## Autor
 Jesús Moreno  
 Desarrollado en Angular + Google Sheets
-
