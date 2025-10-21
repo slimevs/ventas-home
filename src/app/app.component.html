@@ -1,0 +1,19 @@
+<header class="app-header">
+  <div class="container" style="display:flex; align-items:center; gap:12px;">
+    <strong>{{ title }}</strong>
+    <nav style="margin-left:auto;">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Dashboard</a>
+      <a routerLink="/ventas" routerLinkActive="active">Ventas</a>
+      <a routerLink="/inventario" routerLinkActive="active">Inventario</a>
+      <a routerLink="/clientes" routerLinkActive="active">Clientes</a>
+    </nav>
+  </div>
+  <div class="container" style="padding-top:0; padding-bottom:12px; color:var(--muted); font-size:12px;">
+    Modo de datos: <strong>{{ data.mode() | uppercase }}</strong>
+  </div>
+</header>
+
+<main class="container" style="margin-top:16px;">
+  <router-outlet />
+</main>
+

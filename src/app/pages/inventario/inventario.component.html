@@ -1,0 +1,22 @@
+<section class="card">
+  <h2 style="margin-top:0;">Inventario</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Stock</th>
+        <th>Precio</th>
+        <th>Costo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of data.productos()">
+        <td>{{ p.nombre }}</td>
+        <td>{{ p.stock }}</td>
+        <td>{{ p.precio | currency:'USD' }}</td>
+        <td>{{ p.costo | currency:'USD' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+

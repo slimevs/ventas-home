@@ -1,0 +1,11 @@
+export interface Venta {
+  id: string;
+  fecha: Date;
+  cliente: string;
+  producto: string;
+  cantidad: number;
+  precio: number;
+  total: number;
+  costo: number;
+}
+

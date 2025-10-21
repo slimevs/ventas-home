@@ -1,0 +1,11 @@
+id,fecha,cliente,producto,cantidad,precio,total,costo
+v-001,2025-01-03,Cliente A,Producto 1,2,10,20,12
+v-002,2025-01-04,Cliente B,Producto 2,1,15,15,8
+v-003,2025-01-05,Cliente C,Producto 3,3,8,24,15
+v-004,2025-02-10,Cliente A,Producto 2,1,15,15,8
+v-005,2025-02-12,Cliente D,Producto 1,5,10,50,30
+v-006,2025-03-01,Cliente E,Producto 3,2,8,16,10
+v-007,2025-03-08,Cliente F,Producto 2,4,15,60,32
+v-008,2025-04-15,Cliente B,Producto 1,1,10,10,6
+v-009,2025-05-20,Cliente C,Producto 3,6,8,48,30
+v-010,2025-06-05,Cliente A,Producto 2,2,15,30,16

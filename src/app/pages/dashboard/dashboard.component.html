@@ -1,0 +1,43 @@
+<section class="card">
+  <h2 style="margin-top:0;">KPIs</h2>
+  <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+    <label>Desde <input type="date" (change)="setRange($event.target.value, range().to)" /></label>
+    <label>Hasta <input type="date" (change)="setRange(range().from, $event.target.value)" /></label>
+  </div>
+  <div class="kpis" style="margin-top:12px;">
+    <div class="card" *ngFor="let k of kpis()">
+      <div style="color:var(--muted); font-size:12px;">{{ k.label }}</div>
+      <div style="font-size:24px; font-weight:700;">
+        <ng-container [ngSwitch]="k.type">
+          <span *ngSwitchCase="'currency'">{{ k.value | currency:'USD':'symbol':'1.0-0' }}</span>
+          <span *ngSwitchDefault>{{ k.value }}</span>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card" style="margin-top:16px;">
+  <h2 style="margin-top:0;">Últimas ventas</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Cliente</th>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let v of ventas().slice(0,10)">
+        <td>{{ v.fecha | date:'yyyy-MM-dd' }}</td>
+        <td>{{ v.cliente }}</td>
+        <td>{{ v.producto }}</td>
+        <td>{{ v.cantidad }}</td>
+        <td>{{ v.total | currency:'USD':'symbol':'1.0-0' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
