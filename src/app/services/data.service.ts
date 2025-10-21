@@ -98,10 +98,11 @@ export class DataService {
   async createVenta(v: Venta): Promise<Venta> {
     if (this._mode() === 'csv') return v; // read-only
     if (this._mode() === 'api') {
-      const saved = await this.api.create(v);
-      this._ventas.set([saved, ...this._ventas()]);
-      await this.applyStockDeltaRef(saved.productoId, saved.producto, -saved.cantidad);
-      return saved;
+      const saved = await this.api.create(v).catch(() => undefined as unknown as Venta);
+      const sval = saved && saved.id !== undefined ? saved : v;
+      this._ventas.set([sval, ...this._ventas()]);
+      await this.applyStockDeltaRef(sval.productoId, sval.producto, -sval.cantidad);
+      return sval;
     }
     // mock
     const saved = { ...v, id: crypto.randomUUID() };
@@ -114,10 +115,12 @@ export class DataService {
     if (this._mode() === 'csv') return v; // read-only
     const prev = this._ventas().find(x => x.id === v.id);
     if (this._mode() === 'api') {
-      const saved = await this.api.update(v);
-      this._ventas.set(this._ventas().map(x => x.id === saved.id ? saved : x));
-      await this.adjustStockOnUpdate(prev, saved);
-      return saved;
+      const saved = await this.api.update(v).catch(() => undefined as unknown as Venta);
+      const sid = saved && saved.id !== undefined ? saved.id : v.id;
+      const sval = saved && saved.id !== undefined ? saved : v;
+      this._ventas.set(this._ventas().map(x => x && x.id === sid ? sval : x));
+      await this.adjustStockOnUpdate(prev, sval);
+      return sval;
     }
     this._ventas.set(this._ventas().map(x => x.id === v.id ? v : x));
     await this.adjustStockOnUpdate(prev, v);
@@ -188,10 +191,16 @@ export class DataService {
     const newStock = Math.max(0, Number(p.stock || 0) + Number(delta));
     const updated: Producto = { ...p, stock: newStock };
     if (this._mode() === 'api') {
-      const saved = await this.api.updateProducto(updated);
-      this._productos.set(this._productos().map(x => x.id === saved.id ? saved : x));
+      try {
+        const saved = await this.api.updateProducto(updated);
+        const sid = saved && (saved as any).id ? (saved as any).id : updated.id;
+        const sval = saved && (saved as any).id ? saved : updated;
+        this._productos.set(this._productos().map(x => x && x.id === sid ? sval : x));
+      } catch {
+        this._productos.set(this._productos().map(x => x && x.id === updated.id ? updated : x));
+      }
     } else {
-      this._productos.set(this._productos().map(x => x.id === updated.id ? updated : x));
+      this._productos.set(this._productos().map(x => x && x.id === updated.id ? updated : x));
     }
   }
 
