@@ -12,13 +12,13 @@
         <div *ngIf="prodForm.submitted && !nuevo.nombre?.trim()" style="color:#c0392b; font-size:12px;">Campo requerido</div>
       </label>
       <label>Stock <input type="number" [(ngModel)]="nuevo.stock" name="stock" min="0" required />
-        <div *ngIf="prodForm.submitted && !(Number(nuevo.stock)>=0)" style="color:#c0392b; font-size:12px;">Debe ser >= 0</div>
+        <div *ngIf="prodForm.submitted && !((+nuevo.stock) >= 0)" style="color:#c0392b; font-size:12px;">Debe ser >= 0</div>
       </label>
       <label>Precio <input type="number" [(ngModel)]="nuevo.precio" name="precio" min="0" step="0.01" required />
-        <div *ngIf="prodForm.submitted && !(Number(nuevo.precio)>=0)" style="color:#c0392b; font-size:12px;">Debe ser >= 0</div>
+        <div *ngIf="prodForm.submitted && !((+nuevo.precio) >= 0)" style="color:#c0392b; font-size:12px;">Debe ser >= 0</div>
       </label>
       <label>Costo <input type="number" [(ngModel)]="nuevo.costo" name="costo" min="0" step="0.01" required />
-        <div *ngIf="prodForm.submitted && !(Number(nuevo.costo)>=0)" style="color:#c0392b; font-size:12px;">Debe ser >= 0</div>
+        <div *ngIf="prodForm.submitted && !((+nuevo.costo) >= 0)" style="color:#c0392b; font-size:12px;">Debe ser >= 0</div>
       </label>
       <div style="display:flex; align-items:flex-end;">
         <button class="btn icon" type="submit" [disabled]="prodForm.invalid" aria-label="Agregar">
@@ -103,5 +103,5 @@
   </table>
   </div>
 </section>
-<div class="toast" *ngIf="toast">{{ toast }}</div>
+<div class="toast" *ngIf="toast" [ngClass]="toastKind" [class.leaving]="toastLeaving">{{ toast }}</div>
 

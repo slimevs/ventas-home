@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { NgFor, CurrencyPipe, NgIf, NgClass } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { DataService } from '../../services/data.service';
 import { Producto } from '../../models/producto.model';
 
@@ -13,13 +13,16 @@ import { Producto } from '../../models/producto.model';
 })
 export class InventarioComponent {
   readonly data = inject(DataService);
+  @ViewChild('prodForm') prodForm?: NgForm;
 
   nuevo: Producto = { id: '', nombre: '', precio: 0, costo: 0, stock: 0 };
   editId: string | null = null;
   editModel: Producto = { id: '', nombre: '', precio: 0, costo: 0, stock: 0 };
   private expanded = new Set<string>();
   toast: string | null = null;
+  toastKind: 'success' | 'error' | 'info' = 'success';
   private toastTimer: any;
+  toastLeaving = false;
 
   get readOnly() { return this.data.mode() === 'csv'; }
 
@@ -39,7 +42,10 @@ export class InventarioComponent {
   async add() {
     if (!this.nuevo.nombre?.trim()) return;
     await this.data.createProducto({ ...this.nuevo });
+    // Reset form and model to clear validation state and messages
     this.nuevo = { id: '', nombre: '', precio: 0, costo: 0, stock: 0 };
+    this.prodForm?.resetForm(this.nuevo);
+    this.showToast('Producto agregado', 'success');
   }
   async save() {
     if (!this.editModel.nombre?.trim()) return;
@@ -47,12 +53,12 @@ export class InventarioComponent {
     await this.data.updateProducto({ ...this.editModel });
     this.editId = null;
     if (id) this.expanded.delete(id);
-    this.showToast('Producto guardado');
+    this.showToast('Producto guardado', 'success');
   }
   async remove(id: string) {
     await this.data.deleteProducto(id);
     this.expanded.delete(id);
-    this.showToast('Producto eliminado');
+    this.showToast('Producto eliminado', 'error');
   }
 
   // --- Mobile row expand/collapse ---
@@ -62,9 +68,12 @@ export class InventarioComponent {
     if (this.expanded.has(id)) this.expanded.delete(id); else this.expanded.add(id);
   }
 
-  private showToast(msg: string) {
+  private showToast(msg: string, kind: 'success' | 'error' | 'info' = 'success') {
     this.toast = msg;
+    this.toastKind = kind;
+    this.toastLeaving = false;
     if (this.toastTimer) clearTimeout(this.toastTimer);
-    this.toastTimer = setTimeout(() => { this.toast = null; }, 2000);
+    const leaveAt = 1800; const removeAt = 2000;
+    this.toastTimer = setTimeout(() => { this.toastLeaving = true; setTimeout(() => { this.toast = null; this.toastLeaving = false; }, removeAt - leaveAt); }, leaveAt);
   }
 }

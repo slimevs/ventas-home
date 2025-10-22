@@ -97,4 +97,4 @@
   </table>
   </div>
 </section>
-<div class="toast" *ngIf="toast">{{ toast }}</div>
+<div class="toast" *ngIf="toast" [ngClass]="toastKind" [class.leaving]="toastLeaving">{{ toast }}</div>

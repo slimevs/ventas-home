@@ -51,6 +51,7 @@
       </button>
     </div>
   </form>
+  
   <div style="color:var(--muted); margin-top:8px;" *ngIf="data.mode() === 'csv'">
     Modo CSV: solo lectura (deshabilitado crear/editar/eliminar)
   </div>
@@ -60,5 +61,6 @@
   <div style="color:var(--muted); margin-top:8px;" *ngIf="data.mode() === 'mock'">
     Usando datos locales de ejemplo
   </div>
-  
 </div>
+
+<div class="toast" *ngIf="toast" [ngClass]="toastKind" [class.leaving]="toastLeaving">{{ toast }}</div>

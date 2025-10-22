@@ -13,6 +13,10 @@ import { DataService } from '../../services/data.service';
 export class VentaFormComponent {
   readonly data = inject(DataService);
   open = signal(false);
+  toast: string | null = null;
+  toastKind: 'success' | 'error' | 'info' = 'success';
+  private toastTimer: any;
+  toastLeaving = false;
 
   model = {
     fecha: new Date().toISOString().slice(0, 10),
@@ -58,6 +62,18 @@ export class VentaFormComponent {
       total: Number(cantidad) * Number(precio),
       costo: 0
     });
+    this.showToast('Venta guardada', 'success');
     this.open.set(false);
+  }
+
+  private showToast(msg: string, kind: 'success' | 'error' | 'info' = 'success') {
+    this.toast = msg;
+    this.toastKind = kind;
+    this.toastLeaving = false;
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    // start leave animation shortly before removing
+    const leaveAt = 1800;
+    const removeAt = 2000;
+    this.toastTimer = setTimeout(() => { this.toastLeaving = true; setTimeout(() => { this.toast = null; this.toastLeaving = false; }, removeAt - leaveAt); }, leaveAt);
   }
 }

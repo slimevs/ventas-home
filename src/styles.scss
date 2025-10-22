@@ -105,8 +105,9 @@ th.num, td.num { text-align: right; }
 /* Toast */
 .toast {
   position: fixed;
-  right: 16px;
+  left: 50%;
   bottom: 16px;
+  transform: translateX(-50%);
   background: var(--panel);
   color: var(--text);
   border: 1px solid #1f2937;
@@ -114,6 +115,22 @@ th.num, td.num { text-align: right; }
   padding: 10px 14px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.35);
   z-index: 1000;
+  text-align: center;
+  width: max-content;
+  max-width: min(90vw, 480px);
+  animation: toast-in 200ms ease-out;
+}
+.toast.success { border-color: #16a34a; box-shadow: 0 8px 24px rgba(34,197,94,0.25); }
+.toast.error   { border-color: #ef4444; box-shadow: 0 8px 24px rgba(239,68,68,0.25); }
+.toast.leaving { animation: toast-out 200ms ease-in forwards; }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes toast-out {
+  from { opacity: 1; transform: translate(-50%, 0); }
+  to   { opacity: 0; transform: translate(-50%, 8px); }
 }
 
 /* Mobile tweaks */
