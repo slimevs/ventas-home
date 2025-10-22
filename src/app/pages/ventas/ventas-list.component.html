@@ -1,4 +1,4 @@
-<section class="card">
+<section class="card ventas">
   <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
     <h2 style="margin:0;">Ventas</h2>
     <span style="color:var(--muted);">{{ data.ventas().length }} registros</span>
@@ -9,28 +9,52 @@
     </span>
   </div>
 
-  <table style="margin-top:12px;">
+  <div class="table-scroll" style="margin-top:12px;">
+  <table>
     <thead>
       <tr>
         <th>Fecha</th>
         <th>Cliente</th>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Total</th>
-        <th></th>
+        <th class="col-producto">Producto</th>
+        <th class="num col-cantidad">Cantidad</th>
+        <th class="num col-total">Total</th>
+        <th class="col-actions"></th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let v of data.ventas()">
+      <ng-container *ngFor="let v of data.ventas()">
+      <tr class="clickable" (click)="toggleRow(v.id)" [class.expanded]="isExpanded(v.id)">
         <td>{{ v.fecha | date:'yyyy-MM-dd' }}</td>
         <td>{{ v.cliente }}</td>
-        <td>{{ data.productNameFor(v) }}</td>
-        <td>{{ v.cantidad }}</td>
-        <td>{{ v.total | currency:'USD' }}</td>
-        <td>
-          <button class="btn danger" (click)="remove(v.id)" [disabled]="data.mode() === 'csv'">Eliminar</button>
+        <td class="col-producto">{{ data.productNameFor(v) }}</td>
+        <td class="num col-cantidad">{{ v.cantidad }}</td>
+        <td class="num col-total">{{ v.total | currency:'USD' }}</td>
+        <td class="col-actions">
+          <div class="actions" (click)="$event.stopPropagation()">
+            <button class="btn danger icon" (click)="remove(v.id)" [disabled]="data.mode() === 'csv'" aria-label="Eliminar">
+              <span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3zM5 8h14v12H5zM9 4h6v2H9z"/></svg></span>
+              <span class="btn-label">Eliminar</span>
+            </button>
+          </div>
         </td>
       </tr>
+      <tr class="details-row">
+        <td colspan="6">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div><strong>Producto:</strong> {{ data.productNameFor(v) }}</div>
+            <div><strong>Cantidad:</strong> {{ v.cantidad }}</div>
+            <div><strong>Total:</strong> {{ v.total | currency:'USD' }}</div>
+            <div class="actions">
+              <button class="btn danger icon" (click)="remove(v.id)" [disabled]="data.mode() === 'csv'" aria-label="Eliminar">
+                <span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3zM5 8h14v12H5zM9 4h6v2H9z"/></svg></span>
+                <span class="btn-label">Eliminar</span>
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </ng-container>
     </tbody>
   </table>
+  </div>
 </section>

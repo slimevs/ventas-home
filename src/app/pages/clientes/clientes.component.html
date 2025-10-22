@@ -1,4 +1,4 @@
-<section class="card">
+<section class="card clientes">
   <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
     <h2 style="margin:0;">Clientes</h2>
     <span style="color:var(--muted);">{{ data.clientes().length }} registros</span>
@@ -7,50 +7,91 @@
   </div>
 
   <div class="card" style="margin-top:12px;" *ngIf="!readOnly">
-    <form (ngSubmit)="add()" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px;">
-      <label>Nombre <input type="text" [(ngModel)]="nuevo.nombre" name="nombre" required /></label>
+    <form #clienteForm="ngForm" (ngSubmit)="add()" novalidate style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px;">
+      <label>Nombre <input type="text" [(ngModel)]="nuevo.nombre" name="nombre" required />
+        <div *ngIf="clienteForm.submitted && !nuevo.nombre?.trim()" style="color:#c0392b; font-size:12px;">Campo requerido</div>
+      </label>
       <label>Email <input type="email" [(ngModel)]="nuevo.email" name="email" /></label>
       <label>Teléfono <input type="text" [(ngModel)]="nuevo.telefono" name="telefono" /></label>
       <label>Departamento <input type="text" [(ngModel)]="nuevo.departamento" name="departamento" /></label>
       <div style="display:flex; align-items:end;">
-        <button class="btn" type="submit">Agregar</button>
+        <button class="btn" type="submit" [disabled]="clienteForm.invalid">Agregar</button>
       </div>
     </form>
   </div>
 
-  <table style="margin-top:12px; width:100%;">
+  <div class="table-scroll" style="margin-top:12px;">
+  <table style="width:100%;">
     <thead>
       <tr>
         <th>Nombre</th>
-        <th>Email</th>
-        <th>Teléfono</th>
+        <th class="col-email">Email</th>
+        <th class="col-telefono">Teléfono</th>
         <th>Departamento</th>
-        <th style="width:160px;"></th>
+        <th class="col-actions" style="width:160px;"></th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let c of data.clientes()">
-        <ng-container *ngIf="editId !== c.id; else editRow">
+      <ng-container *ngFor="let c of data.clientes()">
+      <tr class="clickable" (click)="toggleRow(c.id)" [class.expanded]="isExpanded(c.id)">
           <td>{{ c.nombre }}</td>
-          <td>{{ c.email || '-' }}</td>
-          <td>{{ c.telefono || '-' }}</td>
+          <td class="col-email">{{ c.email || '-' }}</td>
+          <td class="col-telefono">{{ c.telefono || '-' }}</td>
           <td>{{ c.departamento || '-' }}</td>
-          <td>
-            <button class="btn secondary" (click)="startEdit(c)" [disabled]="readOnly">Editar</button>
-            <button class="btn danger" (click)="remove(c.id)" [disabled]="readOnly">Eliminar</button>
+          <td class="col-actions">
+            <div class="actions" (click)="$event.stopPropagation()">
+              <button class="btn secondary icon" (click)="startEdit(c)" [disabled]="readOnly" aria-label="Editar">
+                <span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm15.66-10.21a1 1 0 000-1.41L16.37 3.29a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></span>
+                <span class="btn-label">Editar</span>
+              </button>
+              <button class="btn danger icon" (click)="remove(c.id)" [disabled]="readOnly" aria-label="Eliminar">
+                <span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3zM5 8h14v12H5zM9 4h6v2H9z"/></svg></span>
+                <span class="btn-label">Eliminar</span>
+              </button>
+            </div>
           </td>
-        </ng-container>
-        <ng-template #editRow>
-          <td><input type="text" [(ngModel)]="editModel.nombre" name="edit_nombre_{{c.id}}" required /></td>
-          <td><input type="email" [(ngModel)]="editModel.email" name="edit_email_{{c.id}}" /></td>
-          <td><input type="text" [(ngModel)]="editModel.telefono" name="edit_tel_{{c.id}}" /></td>
-          <td><input type="text" [(ngModel)]="editModel.departamento" name="edit_dep_{{c.id}}" /></td>
-          <td>
-            <button class="btn" (click)="save()">Guardar</button>
-            <button class="btn secondary" (click)="cancelEdit()" type="button">Cancelar</button>
-          </td>
-        </ng-template>
       </tr>
+      <tr class="details-row" [class.editing]="editId === c.id">
+        <td colspan="5">
+          <ng-container *ngIf="editId === c.id; else clienteDetails">
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px; align-items:end;">
+              <label>Nombre <input type="text" [(ngModel)]="editModel.nombre" name="edit_nombre_{{c.id}}" required /></label>
+              <label>Email <input type="email" [(ngModel)]="editModel.email" name="edit_email_{{c.id}}" /></label>
+              <label>Teléfono <input type="text" [(ngModel)]="editModel.telefono" name="edit_tel_{{c.id}}" /></label>
+              <label>Departamento <input type="text" [(ngModel)]="editModel.departamento" name="edit_dep_{{c.id}}" /></label>
+              <div class="actions" (click)="$event.stopPropagation()">
+                <button class="btn icon" (click)="save()" [disabled]="!editModel.nombre?.trim()" aria-label="Guardar">
+                  <span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5a2 2 0 00-2 2v14h18V7l-4-4zM6 5h8v4H6V5zm6 14a3 3 0 110-6 3 3 0 010 6z"/></svg></span>
+                  <span class="btn-label">Guardar</span>
+                </button>
+                <button class="btn secondary icon" (click)="cancelEdit()" type="button" aria-label="Cancelar">
+                  <span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M6 18L18 6"/></svg></span>
+                  <span class="btn-label">Cancelar</span>
+                </button>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #clienteDetails>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div><strong>Email:</strong> {{ c.email || '-' }}</div>
+              <div><strong>Teléfono:</strong> {{ c.telefono || '-' }}</div>
+              <div class="actions" (click)="$event.stopPropagation()">
+                <button class="btn secondary icon" (click)="startEdit(c)" [disabled]="readOnly" aria-label="Editar">
+                  <span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm15.66-10.21a1 1 0 000-1.41L16.37 3.29a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></span>
+                  <span class="btn-label">Editar</span>
+                </button>
+                <button class="btn danger icon" (click)="remove(c.id)" [disabled]="readOnly" aria-label="Eliminar">
+                  <span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3zM5 8h14v12H5zM9 4h6v2H9z"/></svg></span>
+                  <span class="btn-label">Eliminar</span>
+                </button>
+              </div>
+            </div>
+          </ng-template>
+        </td>
+      </tr>
+      </ng-container>
     </tbody>
   </table>
+  </div>
 </section>
+<div class="toast" *ngIf="toast">{{ toast }}</div>

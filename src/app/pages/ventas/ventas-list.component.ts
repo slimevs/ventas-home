@@ -12,9 +12,16 @@ import { VentaFormComponent } from './venta-form.component';
 })
 export class VentasListComponent {
   readonly data = inject(DataService);
+  private expanded = new Set<string>();
 
   async remove(id: string) {
     await this.data.deleteVenta(id);
+  }
+
+  // Mobile expand/collapse
+  isExpanded(id: string): boolean { return this.expanded.has(id); }
+  toggleRow(id: string) {
+    if (this.expanded.has(id)) this.expanded.delete(id); else this.expanded.add(id);
   }
 }
 
