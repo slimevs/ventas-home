@@ -43,7 +43,7 @@ export class DataService {
 
   // Mostrar nombre de producto desde inventario si hay referencia por ID
   productNameFor(v: Venta): string {
-    const byId = v.productoId ? this._productos().find(p => p.id === v.productoId) : undefined;
+    const byId = v.productoId ? this._productos().find(p => p && p.id === v.productoId) : undefined;
     return byId?.nombre || v.producto;
   }
 
@@ -257,13 +257,16 @@ export class DataService {
 
   // --- Reconciliación ventas <-> productos ---
   private async reconcileVentaProductRefs(): Promise<void> {
-    const productos = this._productos();
+    // Sanitize product list to avoid undefined/null entries coming from API
+    const productos = (this._productos().filter((x): x is Producto => !!x));
     if (!productos.length) return;
     const byName = new Map<string, Producto>();
     const byId = new Map<string, Producto>();
     for (const p of productos) {
-      byName.set(p.nombre.toLowerCase(), p);
-      byId.set(p.id, p);
+      if (!p) continue;
+      const nameKey = String(p.nombre || '').toLowerCase();
+      byName.set(nameKey, p);
+      if (p.id) byId.set(p.id, p);
     }
     const ventas = this._ventas();
     const updated: Venta[] = [];

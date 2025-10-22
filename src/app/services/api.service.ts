@@ -28,7 +28,7 @@ export class ApiService {
   async list(): Promise<Venta[]> {
     const url = `${this.baseUrl}?action=list&entity=ventas`;
     const res = await this.getJson<any>(url);
-    return (res?.data || []).map(this.deserializeVenta);
+    return ((res?.data || []).filter(Boolean)).map(this.deserializeVenta);
   }
 
   async create(v: Venta): Promise<Venta> {
@@ -97,7 +97,7 @@ export class ApiService {
   async listClientes(): Promise<Cliente[]> {
     const url = `${this.baseUrl}?action=list&entity=clientes`;
     const res = await this.getJson<any>(url);
-    return (res?.data || []) as Cliente[];
+    return ((res?.data || []).filter(Boolean)) as Cliente[];
   }
 
   async createCliente(c: Cliente): Promise<Cliente> {
@@ -149,7 +149,7 @@ export class ApiService {
   async listProductos(): Promise<Producto[]> {
     const url = `${this.baseUrl}?action=list&entity=productos`;
     const res = await this.getJson<any>(url);
-    return (res?.data || []) as Producto[];
+    return ((res?.data || []).filter(Boolean)) as Producto[];
   }
 
   async createProducto(p: Producto): Promise<Producto> {
