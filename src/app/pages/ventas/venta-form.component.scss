@@ -1,2 +1,34 @@
 /* simple form layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.form-grid label { display: flex; flex-direction: column; gap: 6px; }
+.form-grid input,
+.form-grid select { width: 100%; display: block; }
 
+.form-actions { display: flex; gap: 8px; margin-top: 12px; }
+.total-field { display:flex; align-items:flex-end; gap:6px; color: var(--muted); }
+.total-field .value { font-weight:700; color: var(--text); }
+
+/* Make summary row span grid width and align right */
+.form-grid .total-field { grid-column: 1 / -1; justify-content: flex-end; }
+
+@media (max-width: 640px) {
+  .form-grid input,
+  .form-grid select { width: 100%; min-width: 0; }
+  /* Normalize some mobile inputs */
+  .form-grid input[type='date'],
+  .form-grid input[type='number'] { -webkit-appearance: none; appearance: none; }
+  .form-actions { justify-content: flex-end; }
+}
+
+/* Soften breakpoint to ensure single column earlier */
+@media (max-width: 1024px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+/* Make the component span full width when placed inside flex containers */
+:host { display: block; width: 100%; flex: 1 1 100%; }
+:host .card { width: 100%; }

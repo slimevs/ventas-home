@@ -1,2 +1,8 @@
 /* clientes styles */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.form-grid label { display: flex; flex-direction: column; gap: 6px; }
 

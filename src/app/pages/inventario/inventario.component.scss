@@ -3,3 +3,11 @@
 .stock-low { color: #ef4444; font-weight: 600; }
 .stock-mid { color: #eab308; font-weight: 600; }
 .stock-ok  { color: #22c55e; font-weight: 600; }
+
+/* match clientes form layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.form-grid label { display: flex; flex-direction: column; gap: 6px; }

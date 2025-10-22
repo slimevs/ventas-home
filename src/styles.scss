@@ -133,7 +133,7 @@ th.num, td.num { text-align: right; }
   .kpis { grid-template-columns: 1fr; }
 
   /* Tables: allow scroll when space is tight */
-  .table-scroll table { min-width: 560px; }
+  .table-scroll table { min-width: 480px; }
 
   /* Icon-only actions on mobile */
   .btn.icon { padding: 10px; }
@@ -162,17 +162,18 @@ th.num, td.num { text-align: right; }
   .inventario table tbody tr.expanded + tr.details-row { display: table-row; }
   .inventario tr.clickable { cursor: pointer; }
 
-  /* Ventas: collapse producto/cantidad/total/acciones; show details row on expand */
-  .ventas table thead th.col-producto,
+  /* Ventas: collapse cantidad/total/acciones; show details row on expand (producto visible) */
   .ventas table thead th.col-cantidad,
   .ventas table thead th.col-total,
   .ventas table thead th.col-actions,
-  .ventas table tbody td.col-producto,
   .ventas table tbody td.col-cantidad,
   .ventas table tbody td.col-total,
   .ventas table tbody td.col-actions { display: none; }
   .ventas table tbody tr.details-row { display: none; }
   .ventas table tbody tr.expanded + tr.details-row { display: table-row; }
   .ventas tr.clickable { cursor: pointer; }
+
+  /* Forms: stack fields on very small screens */
+  .form-grid { grid-template-columns: 1fr !important; }
 }
 

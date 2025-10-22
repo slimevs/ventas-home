@@ -7,15 +7,18 @@
   </div>
 
   <div class="card" style="margin-top:12px;" *ngIf="!readOnly">
-    <form #clienteForm="ngForm" (ngSubmit)="add()" novalidate style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px;">
+    <form #clienteForm="ngForm" (ngSubmit)="add()" novalidate class="form-grid">
       <label>Nombre <input type="text" [(ngModel)]="nuevo.nombre" name="nombre" required />
         <div *ngIf="clienteForm.submitted && !nuevo.nombre?.trim()" style="color:#c0392b; font-size:12px;">Campo requerido</div>
       </label>
       <label>Email <input type="email" [(ngModel)]="nuevo.email" name="email" /></label>
       <label>Teléfono <input type="text" [(ngModel)]="nuevo.telefono" name="telefono" /></label>
       <label>Departamento <input type="text" [(ngModel)]="nuevo.departamento" name="departamento" /></label>
-      <div style="display:flex; align-items:end;">
-        <button class="btn" type="submit" [disabled]="clienteForm.invalid">Agregar</button>
+      <div style="display:flex; align-items:flex-end;">
+        <button class="btn icon" type="submit" [disabled]="clienteForm.invalid" aria-label="Agregar">
+          <span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V6h2v5h5v2h-5v5h-2v-5H6v-2h5z"/></svg></span>
+          <span class="btn-label">Agregar</span>
+        </button>
       </div>
     </form>
   </div>
@@ -54,7 +57,7 @@
       <tr class="details-row" [class.editing]="editId === c.id">
         <td colspan="5">
           <ng-container *ngIf="editId === c.id; else clienteDetails">
-            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px; align-items:end;">
+            <div class="form-grid" style="align-items:flex-end;">
               <label>Nombre <input type="text" [(ngModel)]="editModel.nombre" name="edit_nombre_{{c.id}}" required /></label>
               <label>Email <input type="email" [(ngModel)]="editModel.email" name="edit_email_{{c.id}}" /></label>
               <label>Teléfono <input type="text" [(ngModel)]="editModel.telefono" name="edit_tel_{{c.id}}" /></label>
