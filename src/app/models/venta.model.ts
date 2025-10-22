@@ -8,4 +8,6 @@ export interface Venta {
   precio: number;
   total: number;
   costo: number;
+  medioPago?: string;
+  estadoPago?: string;
 }

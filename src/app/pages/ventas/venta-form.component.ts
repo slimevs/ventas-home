@@ -24,7 +24,9 @@ export class VentaFormComponent {
     producto: '',
     productoId: '' as string | undefined,
     cantidad: 1,
-    precio: 0
+    precio: 0,
+    medioPago: 'Efectivo',
+    estadoPago: 'Pagado'
   };
 
   onProductoChange(name: string) {
@@ -60,7 +62,9 @@ export class VentaFormComponent {
       cantidad: Number(cantidad),
       precio: Number(precio),
       total: Number(cantidad) * Number(precio),
-      costo: 0
+      costo: 0,
+      medioPago: this.model.medioPago,
+      estadoPago: this.model.estadoPago
     });
     this.showToast('Venta guardada', 'success');
     this.open.set(false);

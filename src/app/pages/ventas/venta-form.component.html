@@ -11,6 +11,23 @@
         <input type="date" [(ngModel)]="model.fecha" name="fecha" required />
         <div *ngIf="ventaForm.submitted && !model.fecha" style="color:#c0392b; font-size:12px;">Campo requerido</div>
       </label>
+      <label>
+        Medio de pago
+        <select [(ngModel)]="model.medioPago" name="medioPago" required>
+          <option value="Efectivo">Efectivo</option>
+          <option value="Tarjeta">Tarjeta</option>
+          <option value="Transferencia">Transferencia</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </label>
+      <label>
+        Estado del pago
+        <select [(ngModel)]="model.estadoPago" name="estadoPago" required>
+          <option value="Pagado">Pagado</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="Parcial">Parcial</option>
+        </select>
+      </label>
       <label>Cliente 
         <input type="text" [(ngModel)]="model.cliente" name="cliente" list="clientes-list" (input)="onClienteChange($event.target.value)" required />
         <datalist id="clientes-list">

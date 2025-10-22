@@ -44,6 +44,8 @@
             <div><strong>Producto:</strong> {{ data.productNameFor(v) }}</div>
             <div><strong>Cantidad:</strong> {{ v.cantidad }}</div>
             <div><strong>Total:</strong> {{ v.total | currency:'USD' }}</div>
+            <div><strong>Medio de pago:</strong> {{ v.medioPago || '-' }}</div>
+            <div><strong>Estado del pago:</strong> {{ v.estadoPago || '-' }}</div>
             <div class="actions">
               <button class="btn danger icon" (click)="remove(v.id)" [disabled]="data.mode() === 'csv'" aria-label="Eliminar">
                 <span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3zM5 8h14v12H5zM9 4h6v2H9z"/></svg></span>

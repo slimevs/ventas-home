@@ -79,7 +79,9 @@ export class ApiService {
   private serializeVenta(v: Venta) {
     return {
       ...v,
-      fecha: v.fecha instanceof Date ? v.fecha.toISOString() : v.fecha
+      fecha: v.fecha instanceof Date ? v.fecha.toISOString() : v.fecha,
+      medioPago: (v as any).medioPago || '',
+      estadoPago: (v as any).estadoPago || ''
     };
   }
   private deserializeVenta = (r: any): Venta => ({
@@ -90,7 +92,9 @@ export class ApiService {
     cantidad: Number(r.cantidad ?? 0),
     precio: Number(r.precio ?? 0),
     total: Number(r.total ?? 0),
-    costo: Number(r.costo ?? 0)
+    costo: Number(r.costo ?? 0),
+    medioPago: String(r.medioPago ?? ''),
+    estadoPago: String(r.estadoPago ?? '')
   });
 
   // ---- Clientes ----

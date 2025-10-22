@@ -81,7 +81,7 @@ function doPost(e) {
 }
 
 // CONFIG: Id de la hoja y nombre de pestaña
-const SHEET_ID = 'REEMPLAZAR_CON_TU_ID';
+const SHEET_ID = '1JRpyhg_aXYyKfH6EKHtRBEJMXynfkVHTFSeMosa0CTs';
 const TAB_VENTAS = 'Ventas';
 const TAB_CLIENTES = 'Clientes';
 const TAB_PRODUCTOS = 'Productos';
@@ -107,6 +107,8 @@ function listVentas_() {
   const precioI = idx('precio');
   const totalI = idx('total');
   const costoI = idx('costo');
+  const medioPagoI = idx('medioPago');
+  const estadoPagoI = idx('estadoPago');
   return rows.filter(r => r.join('').length).map(r => ({
     id: String(r[idI] || ''),
     fecha: r[fechaI] instanceof Date ? r[fechaI].toISOString() : String(r[fechaI] || ''),
@@ -115,7 +117,9 @@ function listVentas_() {
     cantidad: Number(r[cantidadI] || 0),
     precio: Number(r[precioI] || 0),
     total: Number(r[totalI] || 0),
-    costo: Number(r[costoI] || 0)
+    costo: Number(r[costoI] || 0),
+    medioPago: String(medioPagoI >= 0 ? (r[medioPagoI] || '') : ''),
+    estadoPago: String(estadoPagoI >= 0 ? (r[estadoPagoI] || '') : '')
   }));
 }
 
@@ -124,8 +128,8 @@ function createVenta_(v) {
   const header = sh.getRange(1,1,1,sh.getLastColumn()).getValues()[0] || [];
   const needHeader = header.length === 0;
   if (needHeader) {
-    sh.getRange(1,1,1,8).setValues([[
-      'id','fecha','cliente','producto','cantidad','precio','total','costo'
+    sh.getRange(1,1,1,10).setValues([[
+      'id','fecha','cliente','producto','cantidad','precio','total','costo','medioPago','estadoPago'
     ]]);
   }
   const id = v.id || Utilities.getUuid();
@@ -137,7 +141,9 @@ function createVenta_(v) {
     Number(v.cantidad || 0),
     Number(v.precio || 0),
     Number(v.total || 0),
-    Number(v.costo || 0)
+    Number(v.costo || 0),
+    v.medioPago || '',
+    v.estadoPago || ''
   ];
   sh.appendRow(row);
   return { ...v, id };
@@ -160,7 +166,9 @@ function updateVenta_(v) {
     Number(v.cantidad || 0),
     Number(v.precio || 0),
     Number(v.total || 0),
-    Number(v.costo || 0)
+    Number(v.costo || 0),
+    v.medioPago || '',
+    v.estadoPago || ''
   ];
   sh.getRange(rowN, 1, 1, data.length).setValues([data]);
   return v;
